@@ -26,9 +26,9 @@
     "type": "git",
     "url": "git+https://github.com/OpenIngenium/search_server.git"
   },
-  "homepage": "https://github.com/nasa-jpl/ingenium-search-server#readme",
+  "homepage": "https://github.com/OpenIngenium/search_server#readme",
   "bugs": {
-    "url": "https://github.com/nasa-jpl/ingenium-search-server/issues"
+    "url": "https://github.com/OpenIngenium/search_server/issues"
   },
   "engines": {
     "node": ">=14.0.0",
