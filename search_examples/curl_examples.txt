@@ -1,0 +1,10 @@
+curl http://localhost:19200/_cat/indices
+curl http://localhost:19200/_cluster/health?pretty=true
+curl http://localhost:19200/element?pretty=true
+curl http://localhost:19200/procedure_element?pretty=true
+curl http://localhost:19200/procedure_element/_search?pretty=true
+
+# get index info
+curl http://localhost:19200/number_index?pretty=true
+# return all docs
+curl http://localhost:19200/number_index/_search?pretty=true

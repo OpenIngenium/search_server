@@ -1,0 +1,249 @@
+openapi: '3.0.0'
+info:
+  title: Ingenium Search Service
+  description: This API service connects to Elasticsearch and provides a search API for Ingenium.
+  version: 1.0.0
+servers:
+  - url: /api/v1
+
+paths:
+  /health:
+    get:
+      tags:
+        - Health
+      summary: Check the health of the API service
+      description: Returns the health status of the API service.
+      responses:
+        '200':
+          description: Health status
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HealthStatus'
+        default:
+          $ref: '#/components/responses/UnexpectedError'
+  /querybuilders:
+    get:
+      tags:
+        - QueryBuilder
+      security:
+        - bearerAuth: []
+      summary: Retrieve a list of query builder saved items
+      description: Retrieve a list of items from the query builder index
+      responses:
+        '200':
+          description: Query builder data
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/GetQueryBuilderItem'
+        default:
+          $ref: '#/components/responses/UnexpectedError'
+    post:
+      tags:
+        - QueryBuilder
+      security:
+        - bearerAuth: []
+      summary: Save an item to the query builder index
+      description: Save an item to the query builder index
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/QueryBuilderItemRequest'
+      responses:
+        "201":
+          description: Item saved successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/QueryBuilderItemResult'
+        default:
+          $ref: '#/components/responses/UnexpectedError'
+  /querybuilders/{id}:
+    get: 
+      tags:
+        - QueryBuilder
+      security:
+        - bearerAuth: []
+      summary: Get querrybuilder from from the query builder index
+      description: Get an item from the query builder index by its ID
+      parameters:
+        - name: id
+          in: path
+          description: ID of the item to get
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Query builder data by id
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/GetQueryBuilderItem'
+        default:
+          $ref: '#/components/responses/UnexpectedError'
+    delete:
+      tags:
+        - QueryBuilder
+      security:
+        - bearerAuth: []
+      summary: Delete an item from the query builder index
+      description: Delete an item from the query builder index by its ID
+      parameters:
+        - name: id
+          in: path
+          description: ID of the item to delete
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Item deleted successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DeleteQueryBuilderItem'
+        default:
+          $ref: '#/components/responses/UnexpectedError'
+  /search:
+    post:
+      tags:
+        - Search
+      security:
+        - bearerAuth: []
+      summary: Perform a search query
+      description: Perform a search query using Elasticsearch
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SearchInput'
+      responses:
+        '200':
+          description: Search results
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SearchResults'
+        default:
+          description: Unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/responses/UnexpectedError'
+components:
+  responses:
+    UnexpectedError:
+      description: Unexpected error
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+  schemas:
+    HealthStatus:
+      type: object
+      properties:
+        status:
+          type: string
+          example: OK
+        message: 
+          type: string
+          example: "Service is running"
+
+    Error:
+      required:
+        - code
+        - message
+      properties:
+        code:
+          type: integer
+          format: int32
+        message:
+          type: string
+      example:
+        code: 500
+        message: Internal Server Error
+
+    GetQueryBuilderItem:
+      type: object
+      properties:
+        id:
+          type: string
+          example: "skdjfhskdfhskdjfh"
+        username:
+          type: string
+          example: "foo"
+        name:
+          type: string
+          example: "Some example name"
+        description:
+          type: string
+          example: "Some Description"
+        queryBuilderParams:
+          type: object
+
+    QueryBuilderItemRequest:
+      required:
+        - name
+        - description
+        - queryBuilderParams
+      type: object
+      properties:
+        name:
+          type: string
+          example: "Some example name"
+        description:
+          type: string
+          example: "Some Description"
+        queryBuilderParams:
+          type: object
+
+    QueryBuilderItemResult:
+      required:
+        - id
+        - name
+        - description
+        - queryBuilderParams
+      type: object
+      properties:
+        id: 
+          type: string
+        name:
+          type: string
+          example: "Some example name"
+        description:
+          type: string
+          example: "Some Description"
+        queryBuilderParams:
+          type: object
+
+    DeleteQueryBuilderItem:
+      required:
+        - message
+        - id 
+      type: object
+      properties:
+        id: 
+          type: string
+        message:
+          type: string
+          example: "Some example message"
+
+    SearchInput:
+      type: object
+      required:
+        - queryBuilderParams
+      properties:
+        queryBuilderParams:
+          type: object
+    
+    SearchResults:
+      type: object
